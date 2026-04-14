@@ -1,37 +1,21 @@
-import sys, time, pyvisa, warnings
-warnings.filterwarnings('ignore')
+import sys
+import pyvisa
 
-if len(sys.argv) < 2:
-    print("ERROR: no command"); sys.exit(1)
 cmd = " ".join(sys.argv[1:])
-
-OSC = 'USB0::0x5345::0x1235::24410241::INSTR'
-
 try:
     rm = pyvisa.ResourceManager()
-    instr = rm.open_resource(OSC)
+    resources = rm.list_resources()
+    osc_id = next((r for r in resources if "AWG" not in r), resources[-1] if resources else "")
+
+    osc = rm.open_resource(osc_id)
+    osc.timeout = 10000  # Драйвер теперь правильный, но таймаут оставляем с запасом
     
-    instr.timeout = 5000
-    instr.write_termination = '\n'
-    instr.read_termination = ''
-
-    if '?' in cmd:
-        instr.clear()
-        time.sleep(0.1)
-        instr.write(cmd)
-        time.sleep(0.3)
-        try:
-            raw = instr.read_raw(size=4096)
-            resp = raw.decode('utf-8', errors='ignore').strip().rstrip('->').strip()
-            print(resp if resp else "EMPTY")
-        except Exception as e:
-            print(f"ERROR_READ: {e}")
+    if "?" in cmd:
+        print(osc.query(cmd).strip()) # Печатаем ТОЛЬКО цифру
     else:
-        instr.write(cmd)
-        time.sleep(0.05)
-        print("OK")
-
-    instr.close()
-    rm.close()
+        osc.write(cmd)
+        
+    osc.close()
 except Exception as e:
-    print(f"ERROR: {e}"); sys.exit(1)
+    print(f"ERROR: {e}")
+    sys.exit(1)

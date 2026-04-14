@@ -1,25 +1,23 @@
 package scpi_sender
 
 import (
+	"fmt"
 	"os/exec"
-	"path/filepath"
 	"strings"
 )
 
-var (
-	pyPath    = `C:\Users\boris\anaconda3\python.exe`
-	genScript = filepath.Join("..", "internal", "python_script", "generator.py")
-	oscScript = filepath.Join("..", "internal", "python_script", "osci.py")
-)
-
-func SendGen(cmd string) string {
-	absScript, _ := filepath.Abs(genScript)
-	out, _ := exec.Command(pyPath, absScript, cmd).CombinedOutput()
+func SendSCPIGen(command string) string {
+	out, err := exec.Command("python", ".\\internal\\python_script\\generator.py", command).CombinedOutput()
+	if err != nil {
+		fmt.Printf("❌ Gen Error (%s): %v | %s\n", command, err, string(out))
+	}
 	return strings.TrimSpace(string(out))
 }
 
-func SendOsc(cmd string) string {
-	absScript, _ := filepath.Abs(oscScript)
-	out, _ := exec.Command(pyPath, absScript, cmd).CombinedOutput()
+func SendSCPIOwonOsci(command string) string {
+	out, err := exec.Command("python", ".\\internal\\python_script\\osci.py", command).CombinedOutput()
+	if err != nil {
+		fmt.Printf("❌ Osc Error (%s): %v | %s\n", command, err, string(out))
+	}
 	return strings.TrimSpace(string(out))
 }
