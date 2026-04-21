@@ -14,39 +14,34 @@ import (
 )
 
 func main() {
-	cfgPath := flag.String("cfg", "configs/lpf_rc.yaml", "path to config file")
+	cfgPath := flag.String("cfg", "configs/lowpass.yaml", "path to config file")
 	flag.Parse()
-
-	log.Printf("📂 Загружаем конфиг из: %s", *cfgPath)
 
 	cfg, err := config.Load(*cfgPath)
 	if err != nil {
-		log.Fatalf("❌ Ошибка загрузки конфига: %v", err)
+		log.Fatalf("Config load error: %v", err)
 	}
 
 	conn, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatalf("❌ Ошибка подключения: %v", err)
+		log.Fatalf("Connection error: %v", err)
 	}
 	defer conn.Close()
 
 	client := lab.NewInstrumentControllerClient(conn)
 
-	log.Printf("🚀 Запуск тестирования: %s", cfg.Mode)
 	points, err := measurement.RunSweep(context.Background(), client, *cfg)
 	if err != nil {
-		log.Fatalf("❌ Ошибка измерений: %v", err)
+		log.Fatalf("Measurement error: %v", err)
 	}
 
 	err = plotting.SaveBodePlot(points, cfg.Output.GainPlot, "Bode Plot (Gain): "+cfg.Mode)
 	if err != nil {
-		log.Fatalf("❌ Ошибка сохранения АЧХ: %v", err)
+		log.Fatalf("Gain plot error: %v", err)
 	}
-	log.Printf("✅ График АЧХ сохранен в %s", cfg.Output.GainPlot)
 
 	err = plotting.SavePhasePlot(points, cfg.Output.PhasePlot, "Bode Plot (Phase): "+cfg.Mode)
 	if err != nil {
-		log.Fatalf("❌ Ошибка сохранения ФЧХ: %v", err)
+		log.Fatalf("Phase plot error: %v", err)
 	}
-	log.Printf("✅ График ФЧХ сохранен в %s", cfg.Output.PhasePlot)
 }
