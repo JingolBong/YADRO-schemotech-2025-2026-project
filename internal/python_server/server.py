@@ -69,14 +69,12 @@ class InstrumentControllerServicer(lab_pb2_grpc.InstrumentControllerServicer):
 
     def MeasurePoint(self, request, context):
         if self.mock_mode:
-            # Генерируем красивые фейковые данные (симуляция RC-фильтра 1кГц)
-            time.sleep(0.05) # Имитация сетевой задержки
+            time.sleep(0.05) 
             f = request.frequency_hz
             fc = 1000.0 
             vin = 4.0
             vout = vin / math.sqrt(1 + (f/fc)**2)
             phase = -math.atan(f/fc) * (180.0 / math.pi)
-            # Добавим немного "шума", чтобы график выглядел как настоящий
             import random
             vout += random.uniform(-0.02, 0.02)
             return lab_pb2.MeasureResponse(vin_vpp=vin, vout_vpp=vout, phase_shift_deg=phase)
