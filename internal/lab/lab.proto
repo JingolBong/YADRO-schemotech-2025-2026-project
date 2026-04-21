@@ -1,0 +1,48 @@
+syntax = "proto3";
+package lab;
+option go_package = "github.com/JingolBong/scheme/internal/lab";
+
+service InstrumentController {
+    rpc SetupInstruments(SetupRequest) returns (SetupResponse);
+    rpc SetGenerator(GeneratorRequest) returns (GeneratorResponse);
+    rpc MeasurePoint(MeasureRequest) returns (MeasureResponse);
+    rpc Shutdown(ShutdownRequest) returns (ShutdownResponse);
+}
+
+message SetupRequest {
+    float amplitude_vpp = 1;
+    string waveform = 2;
+}
+
+message SetupResponse {
+    bool success = 1;
+    string error_msg = 2;
+}
+
+message GeneratorRequest {
+    float frequency_hz = 1;
+    float amplitude_vpp = 2;
+}
+
+message GeneratorResponse {
+    bool success = 1;
+}
+
+message MeasureRequest {
+    float frequency_hz = 1;
+    string timebase = 2;
+    string vscale = 3;
+}
+
+message MeasureResponse {
+    float vin_vpp = 1;
+    float vout_vpp = 2;
+    float phase_shift_deg = 3;
+    string error_msg = 4;
+}
+
+message ShutdownRequest {}
+
+message ShutdownResponse {
+    bool success = 1;
+}

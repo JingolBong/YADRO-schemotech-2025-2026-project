@@ -1,0 +1,27 @@
+mode: highpass
+
+filter:
+  r_ohm: 6800
+  c_farad: 2.2e-8
+
+signal:
+  amplitude_vpp: 4.0
+  offset_v: 0.0
+  waveform: sine
+
+sweep:
+  start_hz: 10
+  stop_hz: 10000
+  points: 30
+  scale: log
+
+scope:
+  ch_in: CH1
+  ch_out: CH2
+  probe: 1X
+  settle_ms: 2500
+
+output:
+  csv: output/highpass_measurements.csv
+  gain_plot: output/highpass_bode_gain.png
+  vout_plot: output/highpass_vout.png

@@ -1,0 +1,17 @@
+mode: bandpass
+
+filter:
+  r_ohm: 6800
+  c_farad: 2.2e-8
+
+signal:
+  amplitude_vpp: 4.0
+  waveform: SIN
+
+sweep:
+  start_hz: 10
+  stop_hz: 100000
+  points: 40
+
+output:
+  gain_plot: output/bpf_bode.png

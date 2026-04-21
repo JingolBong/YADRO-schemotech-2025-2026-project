@@ -8,10 +8,10 @@ try:
     osc_id = next((r for r in resources if "AWG" not in r), resources[-1] if resources else "")
 
     osc = rm.open_resource(osc_id)
-    osc.timeout = 10000  # Драйвер теперь правильный, но таймаут оставляем с запасом
+    osc.timeout = 10000 
     
     if "?" in cmd:
-        print(osc.query(cmd).strip()) # Печатаем ТОЛЬКО цифру
+        print(osc.query(cmd).strip()) 
     else:
         osc.write(cmd)
         
