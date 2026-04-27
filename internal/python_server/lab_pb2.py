@@ -24,14 +24,14 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\tlab.proto\x12\x03lab\"7\n\x0cSetupRequest\x12\x15\n\ramplitude_vpp\x18\x01 \x01(\x02\x12\x10\n\x08waveform\x18\x02 \x01(\t\"3\n\rSetupResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x11\n\terror_msg\x18\x02 \x01(\t\"?\n\x10GeneratorRequest\x12\x14\n\x0c\x66requency_hz\x18\x01 \x01(\x02\x12\x15\n\ramplitude_vpp\x18\x02 \x01(\x02\"$\n\x11GeneratorResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\"H\n\x0eMeasureRequest\x12\x14\n\x0c\x66requency_hz\x18\x01 \x01(\x02\x12\x10\n\x08timebase\x18\x02 \x01(\t\x12\x0e\n\x06vscale\x18\x03 \x01(\t\"`\n\x0fMeasureResponse\x12\x0f\n\x07vin_vpp\x18\x01 \x01(\x02\x12\x10\n\x08vout_vpp\x18\x02 \x01(\x02\x12\x17\n\x0fphase_shift_deg\x18\x03 \x01(\x02\x12\x11\n\terror_msg\x18\x04 \x01(\t\"\x11\n\x0fShutdownRequest\"#\n\x10ShutdownResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x32\x84\x02\n\x14InstrumentController\x12\x39\n\x10SetupInstruments\x12\x11.lab.SetupRequest\x1a\x12.lab.SetupResponse\x12=\n\x0cSetGenerator\x12\x15.lab.GeneratorRequest\x1a\x16.lab.GeneratorResponse\x12\x39\n\x0cMeasurePoint\x12\x13.lab.MeasureRequest\x1a\x14.lab.MeasureResponse\x12\x37\n\x08Shutdown\x12\x14.lab.ShutdownRequest\x1a\x15.lab.ShutdownResponseB+Z)github.com/JingolBong/scheme/internal/labb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\tlab.proto\x12\x03lab\"7\n\x0cSetupRequest\x12\x15\n\ramplitude_vpp\x18\x01 \x01(\x02\x12\x10\n\x08waveform\x18\x02 \x01(\t\"3\n\rSetupResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x11\n\terror_msg\x18\x02 \x01(\t\"?\n\x10GeneratorRequest\x12\x14\n\x0c\x66requency_hz\x18\x01 \x01(\x02\x12\x15\n\ramplitude_vpp\x18\x02 \x01(\x02\"$\n\x11GeneratorResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\"H\n\x0eMeasureRequest\x12\x14\n\x0c\x66requency_hz\x18\x01 \x01(\x02\x12\x10\n\x08timebase\x18\x02 \x01(\t\x12\x0e\n\x06vscale\x18\x03 \x01(\t\"`\n\x0fMeasureResponse\x12\x0f\n\x07vin_vpp\x18\x01 \x01(\x02\x12\x10\n\x08vout_vpp\x18\x02 \x01(\x02\x12\x17\n\x0fphase_shift_deg\x18\x03 \x01(\x02\x12\x11\n\terror_msg\x18\x04 \x01(\t\"\x11\n\x0fShutdownRequest\"#\n\x10ShutdownResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x32\x84\x02\n\x14InstrumentController\x12\x39\n\x10SetupInstruments\x12\x11.lab.SetupRequest\x1a\x12.lab.SetupResponse\x12=\n\x0cSetGenerator\x12\x15.lab.GeneratorRequest\x1a\x16.lab.GeneratorResponse\x12\x39\n\x0cMeasurePoint\x12\x13.lab.MeasureRequest\x1a\x14.lab.MeasureResponse\x12\x37\n\x08Shutdown\x12\x14.lab.ShutdownRequest\x1a\x15.lab.ShutdownResponseB/Z-github.com/JingolBong/schemotech/internal/labb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'lab_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
-  _globals['DESCRIPTOR']._serialized_options = b'Z)github.com/JingolBong/scheme/internal/lab'
+  _globals['DESCRIPTOR']._serialized_options = b'Z-github.com/JingolBong/schemotech/internal/lab'
   _globals['_SETUPREQUEST']._serialized_start=18
   _globals['_SETUPREQUEST']._serialized_end=73
   _globals['_SETUPRESPONSE']._serialized_start=75

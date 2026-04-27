@@ -14,17 +14,17 @@ import (
 )
 
 func main() {
-	cfgPath := flag.String("cfg", "configs/lowpass.yaml", "path to config file")
+	cfgPath := flag.String("cfg", "configs/lpf_rc.yaml", "")
 	flag.Parse()
 
 	cfg, err := config.Load(*cfgPath)
 	if err != nil {
-		log.Fatalf("Config load error: %v", err)
+		log.Fatalf("%v", err)
 	}
 
 	conn, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatalf("Connection error: %v", err)
+		log.Fatalf("%v", err)
 	}
 	defer conn.Close()
 
@@ -32,16 +32,16 @@ func main() {
 
 	points, err := measurement.RunSweep(context.Background(), client, *cfg)
 	if err != nil {
-		log.Fatalf("Measurement error: %v", err)
+		log.Fatalf("%v", err)
 	}
 
 	err = plotting.SaveBodePlot(points, cfg.Output.GainPlot, "Bode Plot (Gain): "+cfg.Mode)
 	if err != nil {
-		log.Fatalf("Gain plot error: %v", err)
+		log.Fatalf("%v", err)
 	}
 
 	err = plotting.SavePhasePlot(points, cfg.Output.PhasePlot, "Bode Plot (Phase): "+cfg.Mode)
 	if err != nil {
-		log.Fatalf("Phase plot error: %v", err)
+		log.Fatalf("%v", err)
 	}
 }

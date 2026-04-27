@@ -14,25 +14,18 @@ type Config struct {
 	} `mapstructure:"filter"`
 	Signal struct {
 		AmplitudeVPP float64 `mapstructure:"amplitude_vpp"`
-		OffsetV      float64 `mapstructure:"offset_v"`
 		Waveform     string  `mapstructure:"waveform"`
 	} `mapstructure:"signal"`
 	Sweep struct {
-		StartHz float64 `mapstructure:"start_hz"`
-		StopHz  float64 `mapstructure:"stop_hz"`
-		Points  int     `mapstructure:"points"`
-		Scale   string  `mapstructure:"scale"`
+		Points int `mapstructure:"points"`
 	} `mapstructure:"sweep"`
-	Scope struct {
-		ChIn     string `mapstructure:"ch_in"`
-		ChOut    string `mapstructure:"ch_out"`
-		Probe    string `mapstructure:"probe"`
-		SettleMs int    `mapstructure:"settle_ms"`
-	} `mapstructure:"scope"`
+	Stats struct {
+		DeltaXMax  float64 `mapstructure:"delta_x_max"`
+		MaxSamples int     `mapstructure:"max_samples"`
+		MinFStep   float64 `mapstructure:"min_f_step"`
+	} `mapstructure:"stats"`
 	Output struct {
-		CSV       string `mapstructure:"csv"`
 		GainPlot  string `mapstructure:"gain_plot"`
-		VoutPlot  string `mapstructure:"vout_plot"`
 		PhasePlot string `mapstructure:"phase_plot"`
 	} `mapstructure:"output"`
 }
@@ -40,9 +33,10 @@ type Config struct {
 func Load(path string) (*Config, error) {
 	v := viper.New()
 	v.SetConfigFile(path)
+	v.SetConfigType("yaml")
 
 	if err := v.ReadInConfig(); err != nil {
-		return nil, fmt.Errorf("ошибка чтения файла %s: %v", path, err)
+		return nil, err
 	}
 
 	var cfg Config

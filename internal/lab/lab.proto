@@ -1,6 +1,6 @@
 syntax = "proto3";
 package lab;
-option go_package = "github.com/JingolBong/scheme/internal/lab";
+option go_package = "github.com/JingolBong/schemotech/internal/lab";
 
 service InstrumentController {
     rpc SetupInstruments(SetupRequest) returns (SetupResponse);

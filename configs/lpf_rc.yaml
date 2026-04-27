@@ -1,27 +1,16 @@
 mode: lowpass
-
 filter:
   r_ohm: 6800
   c_farad: 2.2e-8
-
 signal:
   amplitude_vpp: 4.0
-  offset_v: 0.0
-  waveform: sine
-
+  waveform: SIN
 sweep:
-  start_hz: 10
-  stop_hz: 10000
   points: 30
-  scale: log
-
-scope:
-  ch_in: CH1
-  ch_out: CH2
-  probe: 1X
-  settle_ms: 2500
-
+stats:
+  delta_x_max: 0.05
+  max_samples: 10
+  min_f_step: 0.5
 output:
-  csv: output/lowpass_measurements.csv
-  gain_plot: output/lowpass_bode_gain.png
-  vout_plot: output/lowpass_vout.png
+  gain_plot: output/lpf_gain.png
+  phase_plot: output/lpf_phase.png

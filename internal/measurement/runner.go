@@ -32,14 +32,14 @@ func voltageScaleForFreq(f, fc float64, mode string) string {
 	}
 
 	switch {
-	case ratio < 0.5:
+	case ratio < 1.0:
 		return "1v"
-	case ratio < 1.5:
+	case ratio < 3.0:
 		return "500mv"
-	case ratio < 5.0:
-		return "100mv"
+	case ratio < 10.0:
+		return "200mv"
 	default:
-		return "20mv"
+		return "100mv"
 	}
 }
 
@@ -51,35 +51,57 @@ func RunSweep(ctx context.Context, client lab.InstrumentControllerClient, cfg co
 
 	var results []Point
 	fc := 1.0 / (2.0 * math.Pi * cfg.Filter.ROhm * cfg.Filter.CFarad)
-	step := (math.Log10(cfg.Sweep.StopHz) - math.Log10(cfg.Sweep.StartHz)) / float64(cfg.Sweep.Points-1)
 
-	fmt.Printf("%-10s | %-10s | %-10s | %-10s | %-10s | %-10s\n", "f, Hz", "Vin, V", "Vout, V", "Exp dB", "Theo dB", "Phase Deg")
-	fmt.Println("-------------------------------------------------------------------------")
+	freqs := GenerateSmartSweep(fc, cfg.Sweep.Points, cfg.Stats.MinFStep)
 
-	for i := 0; i < cfg.Sweep.Points; i++ {
-		f := math.Pow(10, math.Log10(cfg.Sweep.StartHz)+float64(i)*step)
+	fmt.Printf("%-10s | %-6s | %-10s | %-10s | %-10s | %-10s\n", "f, Hz", "n", "Vin, V", "Vout, V", "Exp dB", "Phase Deg")
 
-		resp, err := client.MeasurePoint(ctx, &lab.MeasureRequest{
-			FrequencyHz: float32(f),
-			Timebase:    timebaseForFreq(f),
-			Vscale:      voltageScaleForFreq(f, fc, cfg.Mode),
-		})
+	for _, f := range freqs {
+		var voutSamples []float64
+		var vinSum, phaseSum float64
+		n := 0
 
-		if err != nil || resp.ErrorMsg != "" {
+		for n < cfg.Stats.MaxSamples {
+			resp, err := client.MeasurePoint(ctx, &lab.MeasureRequest{
+				FrequencyHz: float32(f),
+				Timebase:    timebaseForFreq(f),
+				Vscale:      voltageScaleForFreq(f, fc, cfg.Mode),
+			})
+			if err != nil || resp.ErrorMsg != "" {
+				continue
+			}
+
+			voutSamples = append(voutSamples, float64(resp.VoutVpp))
+			vinSum += float64(resp.VinVpp)
+			phaseSum += float64(resp.PhaseShiftDeg)
+			n++
+
+			if n >= 3 {
+				_, s := CalculateStats(voutSamples)
+				t := GetStudentT(n)
+
+				nMin := math.Pow((t*s)/cfg.Stats.DeltaXMax, 2)
+
+				if float64(n) >= nMin {
+					break
+				}
+			}
+		}
+
+		if n == 0 {
 			continue
 		}
 
-		vin := float64(resp.VinVpp)
-		vout := float64(resp.VoutVpp)
+		voutMean, _ := CalculateStats(voutSamples)
+		vinMean := vinSum / float64(n)
+		phaseMean := phaseSum / float64(n)
 
 		gainDb := -100.0
-		if vin > 0.001 && vout > 0.0001 {
-			gainDb = 20.0 * math.Log10(vout/vin)
+		if vinMean > 0.001 && voutMean > 0.0001 {
+			gainDb = 20.0 * math.Log10(voutMean/vinMean)
 		}
 
-		theoDb := 0.0
-		theoPhase := 0.0
-
+		theoDb, theoPhase := 0.0, 0.0
 		switch cfg.Mode {
 		case "lowpass":
 			theoDb = TheoryLPF(f, cfg.Filter.ROhm, cfg.Filter.CFarad)
@@ -95,15 +117,15 @@ func RunSweep(ctx context.Context, client lab.InstrumentControllerClient, cfg co
 			theoPhase = TheoryPhaseWien(f, cfg.Filter.ROhm, cfg.Filter.CFarad)
 		}
 
-		fmt.Printf("%-10.1f | %-10.3f | %-10.3f | %-10.2f | %-10.2f | %-10.2f\n", f, vin, vout, gainDb, theoDb, resp.PhaseShiftDeg)
+		fmt.Printf("%-10.1f | %-6d | %-10.3f | %-10.3f | %-10.2f | %-10.2f\n", f, n, vinMean, voutMean, gainDb, phaseMean)
 
 		results = append(results, Point{
 			FreqHz:    f,
-			VinVpp:    vin,
-			VoutVpp:   vout,
+			VinVpp:    vinMean,
+			VoutVpp:   voutMean,
 			GainDB:    gainDb,
 			TheoGain:  theoDb,
-			PhaseDeg:  float64(resp.PhaseShiftDeg),
+			PhaseDeg:  phaseMean,
 			TheoPhase: theoPhase,
 		})
 	}
